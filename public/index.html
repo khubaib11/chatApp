@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px;">
+    <h1 style="text-align: center; color: #333;">Group Chat</h1>
+    <div id="messages" style="border: 1px solid #ccc; background-color: #fff; border-radius: 5px; padding: 20px; height: 400px; overflow-y: auto;"></div>
+    <br>
+    <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+        <input type="text" id="message" placeholder="Enter message" style="width: 70%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-right: 10px;">
+        <button id="sendBTN" style="padding: 10px 20px; border: none; background-color: #5cb85c; color: white; border-radius: 5px; cursor: pointer;">Send</button>
+    </div>
+   
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script> 
+    const socket = io();
+    const sendBTN = document.getElementById('sendBTN');
+    const messageInput = document.getElementById('message');
+    const messagesDiv = document.getElementById('messages');
+
+    function sendMessage() {
+        const message = messageInput.value;
+        if (message.trim() !== "") {
+            socket.emit('user-message', message);
+            messageInput.value = '';
+        }
+    }
+
+    socket.on('message', data => {
+        const p = document.createElement('p');
+        p.textContent = data;
+        p.style.padding = '10px';
+        p.style.borderBottom = '1px solid #ddd';
+        p.style.margin = '0';
+        p.style.backgroundColor = '#f9f9f9';
+        messagesDiv.appendChild(p);
+    });
+
+    sendBTN.addEventListener('click', sendMessage);
+
+    messageInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+</script>
+</html> 
